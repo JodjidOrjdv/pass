@@ -1,0 +1,26 @@
+dist
+.temp
+.tempChromeCanaryProfileForDebug
+.tempChromeProfileForDebug
+node_modules
+.idea
+.tsbuildinfo
+.snapshot
+generated
+src/[Ss]haders/**/*.ts
+*.tsbuildinfo
+.rollup.cache
+# second-level package-json should not be commited
+**/package-lock.json
+**/*.vertex.ts
+**/*.fragment.ts
+*.compute.ts
+**/ShadersInclude/**/*.ts
+shaders/**/*.ts
+jest-screenshot-report/
+junit.xml
+.env
+*.pem
+packages/tools/babylonServer/public/localDev
+packages/tools/babylonServer/public/localDevWebGPU
+packages/tools/playground/public/temp
