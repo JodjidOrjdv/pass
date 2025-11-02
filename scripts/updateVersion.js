@@ -103,3 +103,35 @@ if (!branchName) {
 } else {
     runTagsUpdate();
 }
+    // Now that we have a project id, we need to check that the
+    // the project has whitelisted the domain the request comes from.
+    // Admin supabase needed here, as the projects table is subject to RLS.
+    // We bypass this check if the key is a test key.
+    if (!_isSKTestKey) {
+      let { count } = await supabaseAdmin
+        .from('domains')
+        .select('id', { count: 'exact' })
+        .match({ project_id: projectId, name: requesterHost });
+
+      if (count === 0) {
+        return new Response(
+          `The domain ${requesterHost} is not allowed to access completions for the project with key ${truncateMiddle(
+            projectKey,
+          )}. If you need to access completions from a non-whitelisted domain, such as localhost, use a test project key instead.`,
+          { status: 401 },
+        );
+      }
+    }
+  }
+
+  if (!projectId) {
+    return new Response(
+      'No project found matching the provided key or authorization token.',
+      { status: 401 },
+    );
+  }
+
+  return NextResponse.rewrite(
+    new URL(`/api/v1/openai/completions/${projectId}`, req.url),
+  );
+}
