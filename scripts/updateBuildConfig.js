@@ -24,3 +24,48 @@ config.nonce++;
 config.preid = preid;
 
 fs.writeFileSync(path.resolve("./.build/config.json"), JSON.stringify(config, null, 2));
+export const commentSlice = createSlice({
+    name: 'commentState',
+    initialState: initialState as CommentState,
+    reducers: {
+        afterAddCommentToDoc(
+            state,
+            action: PayloadAction<{ filePath: string; functionName: string }>
+        ) {
+            const commentFn =
+                state.fileThenNames[action.payload.filePath][
+                    action.payload.functionName
+                ]
+            if (commentFn == null) return
+            commentFn.marked = true
+        },
+        updateComments(
+            state,
+            action: PayloadAction<{
+                filePath: string
+                comments: { [key: string]: CommentFunction }
+            }>
+        ) {
+            state.fileThenNames[action.payload.filePath] =
+                action.payload.comments
+        },
+        updateSingleComment(
+            state,
+            action: PayloadAction<{
+                filePath: string
+                functionName: string
+                commentFn: CommentFunction
+            }>
+        ) {
+            if (state.fileThenNames[action.payload.filePath] == null) {
+                state.fileThenNames[action.payload.filePath] = {}
+            }
+            state.fileThenNames[action.payload.filePath][
+                action.payload.functionName
+            ] = action.payload.commentFn
+        },
+    },
+})
+
+export const { updateComments, updateSingleComment, afterAddCommentToDoc } =
+    commentSlice.act
